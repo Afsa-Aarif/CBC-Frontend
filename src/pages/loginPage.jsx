@@ -1,198 +1,115 @@
-import { useGoogleLogin } from "@react-oauth/google";
-import axios from "axios";
 import { useState } from "react";
+import axios from "axios";
 import toast from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-    const navigate = useNavigate()
-	const googleLogin = useGoogleLogin({
-			onSuccess: (response)=>{
-				axios.post(import.meta.env.VITE_API_URL + "/api/users/google-login",{
-					token : response.access_token
-				}).then((res)=>{
-					localStorage.setItem("token",res.data.token)
-					const user = res.data.user;
-					if(user.role == "admin"){
-						navigate("/admin");
-					}else{
-						navigate("/");
-					}
-				}).catch((err)=>{
-					console.error("Google login failed:", err);
-					toast.error("Google login failed. Please try again.");
-				});
-			}
-	});
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
-	async function login() {
-		try {
-			const response = await axios.post(
-				import.meta.env.VITE_API_URL + "/api/users/login",
-				{ email : email, password : password }
-			);
-            localStorage.setItem("token",response.data.token)
-            toast.success("Login successful!");
-			const user = response.data.user;
-			if (user.role == "admin") { 
-				navigate("/admin");
-			} else {
-				navigate("/");
-			}
-		} catch (e) {
-			console.error("Login failed:", e);
-            //alert("Login failed. Please check your credentials.");
-            toast.error("Login failed. Please check your credentials.");
-		}
-	}
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
 
+        try {
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/users/login`, {
+                email,
+                password
+            });
 
-	return (
-		<div className="min-h-screen w-full relative flex items-stretch">
-			{/* Background image + gradient overlay */}
-			<div className="absolute inset-0">
-				<div className="h-full w-full bg-[url('/bg.jpg')] bg-cover bg-center" />
-				<div className="absolute inset-0 bg-gradient-to-br from-secondary/70 via-secondary/40 to-primary/70" />
-			</div>
+            localStorage.setItem("token", res.data.token);
+            localStorage.setItem("role", res.data.user.role);
+            localStorage.setItem("user", JSON.stringify(res.data.user));
 
-			{/* Layout */}
-			<div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 w-full">
-				{/* Left side hero */}
-				<div className="hidden lg:flex flex-col justify-between p-10">
-					<div className="flex items-center gap-4">
-						<img
-							src="/logo.png"
-							alt="CBC - Crystal Beauty Clear"
-							className="h-10 w-auto"
-						/>
-						<span className="text-primary/90 tracking-wide font-semibold">
-							CBC • Crystal Beauty Clear
-						</span>
-					</div>
+            const userName = res.data.user.firstName || 'User';
+            toast.success(`Welcome back, ${userName}!`);
 
-					<div className="flex-1 flex items-center">
-						<div className="max-w-xl space-y-6">
-							<h1 className="text-5xl font-bold leading-tight text-white drop-shadow">
-								Glow on. <span className="text-accent">Shop on.</span>
-							</h1>
-							<p className="text-primary/90 text-lg">
-								Sign in to explore exclusive offers, track your orders, and save
-								your favorite beauty picks. Beautiful shopping—made simple.
-							</p>
-							<div className="h-1 w-28 bg-accent rounded-full" />
-						</div>
-					</div>
+            if (res.data.user.role === "admin") {
+                navigate("/admin");
+            } else {
+                navigate("/");
+            }
+            
+            window.location.reload(); 
 
-					<p className="text-primary/80 text-sm">
-						© {new Date().getFullYear()} CBC – Crystal Beauty Clear. All rights
-						reserved.
-					</p>
-				</div>
+        } catch (err) {
+            console.error("Login Error:", err);
+            toast.error(err.response?.data?.message || "Login failed. Check your credentials.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-				{/* Right side form */}
-				<div className="flex items-center justify-center p-6 sm:p-10">
-					<div className="w-full max-w-md">
-						<div className="rounded-3xl backdrop-blur-xl bg-white/10 border border-white/20 shadow-2xl p-8 sm:p-10">
-							<div className="mb-8 flex flex-col items-center text-center">
-								<img
-									src="/logo.png"
-									alt="CBC Logo"
-									className="h-12 w-auto mb-4"
-								/>
-								<h2 className="text-2xl font-semibold text-white">
-									Welcome back to CBC
-								</h2>
-								<p className="text-primary/90 text-sm">
-									Log in to continue your beauty journey and checkout faster.
-								</p>
-							</div>
+    return (
+        <div 
+            className="min-h-screen flex items-center justify-center p-6 bg-cover bg-center bg-no-repeat"
+            style={{ 
+                backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://jsnjgzyigzcukytqoapx.supabase.co/storage/v1/object/public/background-bucket/WhatsApp%20Image%202026-03-10%20at%209.06.51%20PM.jpeg')` 
+            }}
+        >
+            <div className="max-w-md w-full bg-white/90 backdrop-blur-xl p-10 rounded-[3rem] shadow-2xl border border-white/20">
+                <div className="text-center mb-10">
+                    <h1 className="font-black text-2xl italic tracking-tighter uppercase mb-2">
+                        Crystal<span className="text-rose-500">Beauty</span>
+                    </h1>
+                    <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">
+                        Welcome Back
+                    </h2>
+                </div>
 
-							<div className="space-y-5">
-								<div className="space-y-2">
-									<label
-										htmlFor="email"
-										className="text-sm font-medium text-primary/90"
-									>
-										Email address
-									</label>
-									<input
-										id="email"
-										type="email"
-										placeholder="e.g., you@example.com"
-										autoComplete="email"
-										onChange={(e) => setEmail(e.target.value)}
-										className="w-full h-11 rounded-xl bg-white/90 text-secondary placeholder-secondary/50 px-4 outline-none ring-2 ring-transparent focus:ring-accent/60 transition"
-									/>
-								</div>
+                <form onSubmit={handleLogin} className="space-y-6">
+                    <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                            Email Address
+                        </label>
+                        <input 
+                            type="email" 
+                            required
+                            placeholder="your@email.com"
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="bg-white border border-slate-200 h-14 rounded-2xl px-6 text-sm outline-none focus:ring-2 focus:ring-rose-500 transition-all shadow-sm" 
+                        />
+                    </div>
 
-								<div className="space-y-2">
-									<label
-										htmlFor="password"
-										className="text-sm font-medium text-primary/90"
-									>
-										Password
-									</label>
-									<input
-										id="password"
-										type="password"
-										placeholder="Enter your password"
-										autoComplete="current-password"
-										onChange={(e) => setPassword(e.target.value)}
-										className="w-full h-11 rounded-xl bg-white/90 text-secondary placeholder-secondary/50 px-4 outline-none ring-2 ring-transparent focus:ring-accent/60 transition"
-									/>
-								</div>
+                    <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                            Password
+                        </label>
+                        <input 
+                            type="password" 
+                            required
+                            placeholder="••••••••"
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="bg-white border border-slate-200 h-14 rounded-2xl px-6 text-sm outline-none focus:ring-2 focus:ring-rose-500 transition-all shadow-sm" 
+                        />
+                    </div>
 
-								<div className="flex items-center justify-end text-sm">
-									<Link
-										to="/forget-password"
-										className="text-accent hover:underline underline-offset-4"
-									>
-										Forgot password?
-									</Link>
-								</div>
+                    <div className="flex justify-end pr-2">
+                        <span 
+                            onClick={() => navigate('/forget-password')} 
+                            className="text-[9px] font-black text-slate-400 uppercase tracking-widest hover:text-rose-500 cursor-pointer transition-colors"
+                        >
+                            Forgot Password?
+                        </span>
+                    </div>
 
-								<button
-									onClick={login}
-									className="w-full h-11 rounded-xl bg-accent text-white font-semibold shadow-lg shadow-accent/20 hover:brightness-110 active:scale-[0.99] transition"
-								>
-									Login
-								</button>
-								<button
-									onClick={googleLogin}
-									className="w-full h-11 rounded-xl bg-accent text-white font-semibold shadow-lg shadow-accent/20 hover:brightness-110 active:scale-[0.99] transition"
-								>
-									Google Login
-								</button>
-							</div>
+                    <button 
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black tracking-widest text-xs hover:bg-rose-600 transition-all shadow-xl active:scale-95 disabled:bg-slate-200 mt-2"
+                    >
+                        {isLoading ? "AUTHENTICATING..." : "LOGIN TO ACCOUNT"}
+                    </button>
+                </form>
 
-							<div className="mt-8">
-								<div className="relative text-center">
-									<div className="absolute inset-0 flex items-center">
-										<span className="w-full border-t border-white/20"></span>
-									</div>
-								</div>
-							</div>
-
-							<div className="mt-6 text-center text-sm text-primary/90">
-								New to CBC?{" "}
-								<Link
-									to="/register"
-									className="text-accent hover:underline underline-offset-4"
-								>
-									Create your account
-								</Link>
-							</div>
-						</div>
-
-						{/* Small footer for mobile */}
-						<p className="mt-6 text-center text-primary/80 text-xs lg:hidden">
-							© {new Date().getFullYear()} CBC – Crystal Beauty Clear
-						</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+                <div className="mt-8 text-center space-y-2">
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                        Don't have an account? <span onClick={() => navigate('/register')} className="text-rose-500 cursor-pointer hover:underline">Register Now</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
 }

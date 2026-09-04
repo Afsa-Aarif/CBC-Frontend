@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme {
+  /* Ensuring brand colors are available to all components */
+  --color-brand-light: #EEC8CF;
+  --color-brand-primary: #AE5969;
+  --color-brand-accent: #CE8A97;
+}
+
+/* Base styles for the App container */
+body {
+  background-color: #F4F4F4;
+  margin: 0;
+  font-family: sans-serif;
+  color: #333333;
+}
+
+/* Smooth transitions for your buttons and interactive elements */
+* {
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+/* Custom scrollbar to match your premium beauty theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F4F4F4;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CE8A97;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #AE5969;
+}

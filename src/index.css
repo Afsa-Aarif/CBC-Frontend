@@ -1,7 +1,60 @@
+/* 1. Import Tailwind v4 Engine */
 @import "tailwindcss";
 
+/* 2. Define your Beauty Brand Palette */
 @theme {
-	--color-accent: #fa812f;
-	--color-primary: #fef3e2;
-	--color-secondary: #393e46;
+  --color-brand-light: #EEC8CF;
+  --color-brand-primary: #AE5969;
+  --color-brand-accent: #CE8A97;
+}
+
+/* 3. Global CSS Variables (Updated with your specific codes) */
+:root {
+  --color-primary: #EEC8CF;    /* Soft Pink background */
+  --color-secondary: #AE5969;  /* Deep Rose text/elements */
+  --color-accent: #CE8A97;     /* Muted Rose highlights */
+}
+
+/* 4. Default body styles */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #F4F4F4;   /* Clean light gray for the main background */
+  color: var(--color-secondary);
+  margin: 0;
+  padding: 0;
+}
+
+/* 5. Utility classes (Logic preserved, colors updated) */
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.bg-secondary {
+  background-color: var(--color-secondary);
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-secondary {
+  color: var(--color-secondary);
+}
+
+.text-accent {
+  color: var(--color-accent);
+}
+
+.btn-accent {
+  background-color: var(--color-secondary); /* Using your Deep Rose for buttons */
+  color: white;
+  border-radius: 9999px; /* Rounded-full looks more premium for beauty brands */
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-accent:hover {
+  background-color: var(--color-accent);
+  transform: translateY(-1px);
 }

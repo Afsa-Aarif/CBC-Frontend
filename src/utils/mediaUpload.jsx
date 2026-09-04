@@ -1,37 +1,35 @@
 import { createClient } from "@supabase/supabase-js";
 
-const anonKey =
-	"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpqeXZzY2NxZHZ6bXNvb3RldnVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYxMjg3ODIsImV4cCI6MjA3MTcwNDc4Mn0._UROOdpCU5IlFtwVP8kNktFlXUfo3QU_YwihNh7HQZA";
-const supabaseUrl = "https://jjyvsccqdvzmsootevuf.supabase.co";
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 const supabase = createClient(supabaseUrl, anonKey);
 
+export default async function mediaUpload(file) {
+  if (!file) {
+    throw new Error("No file selected");
+  }
 
-export default function mediaUpload(file) {
-	return new Promise((resolve, reject) => {
-		if (file == null) {
-			reject("No file selected");
-		} else {
-            const timestamp = new Date().getTime();
-            const fileName = timestamp+file.name
+  const timestamp = new Date().getTime();
+  const fileName = `${timestamp}_${file.name.replace(/\s+/g, "_")}`;
 
-			supabase.storage
-				.from("images")
-				.upload(fileName, file, {
-					upsert: false,
-					cacheControl: "3600",
-				})
-				.then(() => {
-					const publicUrl = supabase.storage
-						.from("images")
-						.getPublicUrl(fileName).data.publicUrl;
+  // 1. Upload to Supabase 'products' bucket
+  const { data, error } = await supabase.storage
+    .from("products")
+    .upload(fileName, file, {
+      upsert: false,
+      cacheControl: "3600"
+    });
 
-					resolve(publicUrl);
-				}).catch(
-                    ()=>{
-                        reject("An error occured")
-                    }
-                )
-		}
-	});
+  if (error) {
+    console.error("Supabase Upload Error:", error);
+    throw new Error(error.message || "Failed to upload image");
+  }
+
+  // 2. Fetch the public URL directly
+  const { data: urlData } = supabase.storage
+    .from("products")
+    .getPublicUrl(fileName);
+
+  return urlData.publicUrl;
 }
