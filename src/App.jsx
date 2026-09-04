@@ -16,8 +16,8 @@ import ProductPage from './pages/productPage.jsx';
 import ProductOverview from './pages/productOverview.jsx'; 
 import About from './pages/About.jsx';
 import Contact from './pages/Contact.jsx';
-import AdminPage from './pages/AdminPage.jsx';
-import AdminPromotionsPage from './pages/admin/adminPromotionsPage.jsx'; // <-- NEW PROMOTIONS PAGE IMPORT
+import AdminPage from './pages/admin/adminPage.jsx'; // Fixed import path
+import AdminPromotionsPage from './pages/admin/adminPromotionsPage.jsx';
 import Login from './pages/loginPage.jsx';
 import Register from './pages/registerPage.jsx';
 import CartPage from './pages/CartPage.jsx';
