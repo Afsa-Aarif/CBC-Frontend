@@ -3,17 +3,17 @@ import { FaChartLine, FaPlusSquare, FaSignOutAlt, FaEnvelope, FaTag } from "reac
 import { MdShoppingCartCheckout } from "react-icons/md";
 import { BsBox2Heart } from "react-icons/bs";
 import { HiOutlineUsers } from "react-icons/hi";
-import AdminProductPage from "./admin/adminProductPage";
-import AddProductPage from "./admin/adminAddNewProduct";
-import UpdateProductPage from "./admin/adminUpdateProduct";
-import AdminOrdersPage from "./admin/adminOrdersPage";
-import AdminInquiriesPage from "./admin/adminInquiriesPage";
-import AdminPromotionsPage from "./admin/adminPromotionsPage"; // <-- NEW PROMOTIONS IMPORT
+import AdminProductPage from "./admin/adminProductPage.jsx";
+import AddProductPage from "./admin/adminaddnewproduct.jsx";
+import UpdateProductPage from "./admin/adminUpdateProduct.jsx";
+import AdminOrdersPage from "./admin/adminOrdersPage.jsx";
+import AdminInquiriesPage from "./admin/adminInquiriesPage.jsx";
+import AdminPromotionsPage from "./admin/adminPromotionsPage.jsx";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Loader } from "../components/loader";
-import AdminUsersPage from "./admin/adminUsersPage";
+import Loader from "../components/loader.jsx";
+import AdminUsersPage from "./admin/adminUsersPage.jsx";
 
 export default function AdminPage() {
     const navigate = useNavigate();
@@ -73,9 +73,9 @@ export default function AdminPage() {
                     <SidebarLink to="/admin/orders" icon={<MdShoppingCartCheckout />} label="Orders" />
                     <SidebarLink to="/admin/products" icon={<BsBox2Heart />} label="Products" />
                     <SidebarLink to="/admin/add-product" icon={<FaPlusSquare />} label="Add New Product" />
-                    <SidebarLink to="/admin/users" icon={<HiOutlineUsers />} label="Users text" />
+                    <SidebarLink to="/admin/users" icon={<HiOutlineUsers />} label="Users" />
                     <SidebarLink to="/admin/inquiries" icon={<FaEnvelope />} label="Inquiries" />
-                    <SidebarLink to="/admin/promotions" icon={<FaTag />} label="Promotions" /> {/* NEW LINK */}
+                    <SidebarLink to="/admin/promotions" icon={<FaTag />} label="Promotions" />
                 </nav>
 
                 <button 
@@ -99,7 +99,7 @@ export default function AdminPage() {
                             <Route path="/update-product/:id" element={<UpdateProductPage />} />
                             <Route path="/users" element={<AdminUsersPage />} />
                             <Route path="/inquiries" element={<AdminInquiriesPage />} />
-                            <Route path="/promotions" element={<AdminPromotionsPage />} /> {/* NEW ROUTE */}
+                            <Route path="/promotions" element={<AdminPromotionsPage />} />
                         </Routes>
                     ) : (
                         <div className="flex h-full items-center justify-center">
