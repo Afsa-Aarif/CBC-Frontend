@@ -16,7 +16,7 @@ import ProductPage from './pages/productPage.jsx';
 import ProductOverview from './pages/productOverview.jsx'; 
 import About from './pages/About.jsx';
 import Contact from './pages/Contact.jsx';
-import AdminPage from './pages/adminpage.jsx';
+import AdminPage from './pages/adminPage.jsx';
 import AdminPromotionsPage from './pages/admin/adminPromotionsPage.jsx';
 import Login from './pages/loginPage.jsx';
 import Register from './pages/registerPage.jsx';
