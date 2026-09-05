@@ -4,7 +4,7 @@ import { MdShoppingCartCheckout } from "react-icons/md";
 import { BsBox2Heart } from "react-icons/bs";
 import { HiOutlineUsers } from "react-icons/hi";
 import AdminProductPage from "./admin/adminProductPage.jsx";
-import AddProductPage from "./admin/adminaddnewproduct.jsx";
+import AddProductPage from "./admin/adminAddNewProduct.jsx";
 import UpdateProductPage from "./admin/adminUpdateProduct.jsx";
 import AdminOrdersPage from "./admin/adminOrdersPage.jsx";
 import AdminInquiriesPage from "./admin/adminInquiriesPage.jsx";
@@ -12,7 +12,7 @@ import AdminPromotionsPage from "./admin/adminPromotionsPage.jsx";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import Loader from "../components/loader.jsx";
+import Loader from "../components/loader.jsx"
 import AdminUsersPage from "./admin/adminUsersPage.jsx";
 
 export default function AdminPage() {

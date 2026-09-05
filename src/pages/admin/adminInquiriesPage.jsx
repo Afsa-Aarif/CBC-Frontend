@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { FiClock, FiSend, FiMail, FiCheckCircle } from 'react-icons/fi';
-import { Loader } from '../../components/loader';
+import Loader from '../../components/loader';
 
 export default function AdminInquiriesPage() {
   const [messages, setMessages] = useState([]);

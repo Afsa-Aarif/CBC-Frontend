@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import toast from "react-hot-toast";
 import { Link, useParams } from "react-router-dom";
-import { Loader } from "../components/loader";
+import Loader  from "../components/loader.jsx";
 import { FiChevronRight, FiHeart, FiStar, FiX, FiChevronLeft } from "react-icons/fi";
 import { FaHeart, FaStar } from "react-icons/fa";
 

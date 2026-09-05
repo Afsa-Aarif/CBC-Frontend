@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loader } from "../../components/loader";
+import Loader  from "../../components/loader.jsx";
 import OrderModal from "../../components/orderInfoModal";
 import { BiPackage, BiUser, BiPhone } from "react-icons/bi";
 import { FaTag } from "react-icons/fa";
