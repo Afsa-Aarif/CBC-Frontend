@@ -16,9 +16,16 @@ export default function ForgetPassword() {
     if (!identifier) return toast.error("Please enter email or phone");
     setIsLoading(true);
     try {
-      const encodedIdentifier = encodeURIComponent(identifier.trim());
-      await axios.get(`${import.meta.env.VITE_API_URL}/api/users/send-otp/${encodedIdentifier}`);
-      toast.success("OTP sent successfully!");
+      // Changed from GET to POST to match updated backend controller payload
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/users/send-otp`,
+        {
+          identifier: identifier.trim(),
+          email: identifier.trim(),
+        }
+      );
+      
+      toast.success(response.data?.message || "OTP sent successfully!");
       setStep("otp");
     } catch (e) {
       toast.error(e.response?.data?.message || "Failed to send OTP.");
@@ -30,16 +37,20 @@ export default function ForgetPassword() {
   async function changePassword() {
     if (!otp) return toast.error("Please enter the OTP");
     if (!newPassword) return toast.error("Please enter a new password");
-    if (newPassword !== confirmPassword) return toast.error("Passwords do not match");
+    if (newPassword !== confirmPassword)
+      return toast.error("Passwords do not match");
 
     setIsLoading(true);
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/users/change-password`, {
-        identifier: identifier.trim(),
-        otp: otp.trim(),
-        newPassword: newPassword,
-      });
-      toast.success("Password changed successfully!");
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/users/change-password`,
+        {
+          identifier: identifier.trim(),
+          otp: otp.trim(),
+          newPassword: newPassword,
+        }
+      );
+      toast.success(response.data?.message || "Password changed successfully!");
       navigate("/login");
     } catch (e) {
       toast.error(e.response?.data?.message || "Error updating password.");
@@ -105,6 +116,13 @@ export default function ForgetPassword() {
               onClick={changePassword}
             >
               {isLoading ? "Processing..." : "Confirm Update"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setStep("identifier")}
+              className="text-xs text-gray-400 hover:text-white mt-2 text-center underline"
+            >
+              Back to Email Input
             </button>
           </div>
         )}
