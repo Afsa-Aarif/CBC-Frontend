@@ -25,6 +25,8 @@ export default function AdminProductUpdatePage() {
 
     const [features, setFeatures] = useState([]);
     const [featureInput, setFeatureInput] = useState("");
+    const [altNames, setAltNames] = useState([]);
+const [altNameInput, setAltNameInput] = useState("");
     const [existingImages, setExistingImages] = useState([]);
     const [newImages, setNewImages] = useState([]);
     const [previews, setPreviews] = useState([]);
@@ -48,7 +50,8 @@ export default function AdminProductUpdatePage() {
                     shippingInfo: p.shippingInfo || ""
                 });
                 setFeatures(p.features || []);
-                setExistingImages(p.images || []);
+setAltNames(p.altNames || []);
+setExistingImages(p.images || []);
                 setIsLoadingData(false);
             } catch (err) {
                 console.error("Error loading product:", err);
@@ -80,6 +83,23 @@ export default function AdminProductUpdatePage() {
             setFeatureInput("");
         }
     };
+    const addAlternativeName = () => {
+    const name = altNameInput.trim();
+
+    if (!name) return;
+
+    if (altNames.includes(name)) {
+        toast.error("This alternative name already exists");
+        return;
+    }
+
+    setAltNames([...altNames, name]);
+    setAltNameInput("");
+};
+
+const removeAlternativeName = (index) => {
+    setAltNames(altNames.filter((_, i) => i !== index));
+};
 
     const handleUpdate = async (e) => {
         e.preventDefault();
@@ -97,11 +117,12 @@ export default function AdminProductUpdatePage() {
                 uploadedUrls = await Promise.all(newImages.map(img => mediaUpload(img)));
             }
 
-            const finalData = {
-                ...formData,
-                features: features,
-                images: [...existingImages, ...uploadedUrls]
-            };
+         const finalData = {
+    ...formData,
+    altNames: altNames,
+    features: features,
+    images: [...existingImages, ...uploadedUrls]
+};
 
             await axios.put(`${import.meta.env.VITE_API_URL}/api/products/${id}`, finalData, {
                 headers: { Authorization: `Bearer ${token}` }
@@ -138,6 +159,57 @@ export default function AdminProductUpdatePage() {
                             <Input label="SKU / Product ID" value={formData.productID} onChange={(e) => setFormData({...formData, productID: e.target.value})} />
                             <Input label="Product Name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
                         </div>
+                        {/* Alternative Names */}
+<div className="space-y-3">
+    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest">
+        Alternative Names
+    </label>
+
+    <div className="flex gap-2">
+        <input
+            type="text"
+            value={altNameInput}
+            onChange={(e) => setAltNameInput(e.target.value)}
+            onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    addAlternativeName();
+                }
+            }}
+            placeholder="e.g. CeraVe Face Wash"
+            className="flex-1 bg-gray-50 border border-gray-100 h-12 rounded-2xl px-4 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition-all"
+        />
+
+        <button
+            type="button"
+            onClick={addAlternativeName}
+            className="px-5 rounded-2xl bg-indigo-900 text-white hover:bg-black transition"
+        >
+            <FiPlusCircle size={20} />
+        </button>
+    </div>
+
+    {altNames.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+            {altNames.map((name, index) => (
+                <span
+                    key={index}
+                    className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-2 rounded-full text-xs font-semibold"
+                >
+                    {name}
+
+                    <button
+                        type="button"
+                        onClick={() => removeAlternativeName(index)}
+                        className="text-red-500 hover:text-red-700"
+                    >
+                        <FiX size={14} />
+                    </button>
+                </span>
+            ))}
+        </div>
+    )}
+</div>
 
                         <div className="grid grid-cols-3 gap-4">
                             <Input label="Sale Price (LKR)" type="number" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} />

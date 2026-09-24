@@ -248,11 +248,31 @@ export default function ProductOverview() {
 
                     {/* Hero Right Side */}
                     <div className="lg:col-span-5 px-2 lg:sticky lg:top-28">
-                        <h1 className="text-3xl font-black text-slate-900 uppercase italic mb-3 leading-tight tracking-wide">
-                            {product?.name}
-                        </h1>
+                     <h1 className="text-3xl font-black text-slate-900 uppercase italic mb-2 leading-tight tracking-wide">
+    {product?.name}
+</h1>
 
-                        <div className="flex items-center gap-2 mb-4">
+{/* Alternative Names */}
+{product?.altNames && product.altNames.length > 0 && (
+    <div className="mb-4">
+        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">
+            Also known as
+        </p>
+
+        <div className="flex flex-wrap gap-2">
+            {product.altNames.map((altName, index) => (
+                <span
+                    key={index}
+                    className="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-full text-[10px] font-semibold"
+                >
+                    {altName}
+                </span>
+            ))}
+        </div>
+    </div>
+)}
+
+<div className="flex items-center gap-2 mb-4">
                             <div className="flex items-center text-amber-400">
                                 {[...Array(5)].map((_, i) => (
                                     <FaStar key={i} className={i < Math.round(product?.rating || 5) ? "fill-current" : "text-slate-200"} size={13} />
