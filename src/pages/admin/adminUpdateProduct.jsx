@@ -19,6 +19,7 @@ export default function AdminProductUpdatePage() {
         price: 0,
         labelledPrice: 0,
         stock: 0,
+        soldCount: 0,
         category: "Skincare",
         shippingInfo: ""
     });
@@ -46,6 +47,7 @@ const [altNameInput, setAltNameInput] = useState("");
                     price: p.price || 0,
                     labelledPrice: p.labelledPrice || 0,
                     stock: p.stock || 0,
+                    soldCount: p.soldCount || 0,
                     category: p.category || "Skincare",
                     shippingInfo: p.shippingInfo || ""
                 });
@@ -211,12 +213,12 @@ const removeAlternativeName = (index) => {
     )}
 </div>
 
-                        <div className="grid grid-cols-3 gap-4">
-                            <Input label="Sale Price (LKR)" type="number" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} />
-                            <Input label="Label Price (LKR)" type="number" value={formData.labelledPrice} onChange={(e) => setFormData({...formData, labelledPrice: e.target.value})} />
-                            <Input label="Stock Level" type="number" value={formData.stock} onChange={(e) => setFormData({...formData, stock: e.target.value})} />
-                        </div>
-
+<div className="grid grid-cols-4 gap-4">
+    <Input label="Sale Price (LKR)" type="number" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} />
+    <Input label="Label Price (LKR)" type="number" value={formData.labelledPrice} onChange={(e) => setFormData({...formData, labelledPrice: e.target.value})} />
+    <Input label="Stock Level" type="number" value={formData.stock} onChange={(e) => setFormData({...formData, stock: e.target.value})} />
+    <Input label="Sold Quantity" type="number" value={formData.soldCount} onChange={(e) => setFormData({...formData, soldCount: e.target.value})} />
+</div>
                         <div>
                             <label className="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">
                                 Description <span className="text-red-500">*</span>

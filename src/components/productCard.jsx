@@ -10,6 +10,8 @@ export default function ProductCard({ product }) {
   const productName = product.name || "Luxury Beauty Item";
   const displayID = product.productID || "N/A";
   const category = product.category || "Luxury";
+  const rating = Number(product.rating) || 0;
+const reviewsCount = Number(product.reviewsCount) || 0;
   
   const imageUrl = Array.isArray(product.images) && product.images.length > 0
     ? product.images[0]
@@ -23,10 +25,10 @@ export default function ProductCard({ product }) {
   return (
     <Link 
       to={`/product/${product._id}`} 
-      className="group relative w-full max-w-[280px] bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-900/5 hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col overflow-hidden p-4 text-left"
+      className="group relative w-full bg-white rounded-2xl sm:rounded-[2rem] border border-slate-100 shadow-md sm:shadow-xl shadow-slate-900/5 hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col overflow-hidden p-2.5 sm:p-4 text-left"
     >
       {/* Visual Image Display Frame */}
-      <div className="w-full h-[240px] rounded-[1.5rem] overflow-hidden bg-slate-50 relative">
+      <div className="w-full aspect-[4/5] sm:h-[240px] sm:aspect-auto rounded-xl sm:rounded-[1.5rem] overflow-hidden bg-slate-50 relative">
         <img 
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" 
           src={imageUrl} 
@@ -59,6 +61,25 @@ export default function ProductCard({ product }) {
         <h1 className="text-sm font-black text-slate-800 tracking-tight mt-1 line-clamp-1 group-hover:text-rose-500 transition-colors">
           {productName}
         </h1>
+        {reviewsCount > 0 ? (
+  <div className="mt-2 flex items-center gap-1.5">
+    <span className="text-[11px] text-amber-400 tracking-tight">
+      ★★★★★
+    </span>
+
+    <span className="text-[9px] font-bold text-slate-500">
+      {rating.toFixed(1)}
+    </span>
+
+    <span className="text-[9px] text-slate-400">
+      ({reviewsCount})
+    </span>
+  </div>
+) : (
+  <div className="mt-2 text-[9px] font-semibold text-slate-400">
+    No reviews yet
+  </div>
+)}
         {/* Alternative Names */}
 {Array.isArray(product.altNames) && product.altNames.length > 0 && (
   <div className="mt-1.5">

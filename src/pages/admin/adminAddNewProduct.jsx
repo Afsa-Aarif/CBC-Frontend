@@ -16,7 +16,8 @@ export default function AddProductPage() {
     price: 0, 
     labelledPrice: 0, 
     category: "Skincare", 
-    stock: 0
+    stock: 0,
+    soldCount: 0
 });
     
     const [featureInput, setFeatureInput] = useState("");
@@ -191,11 +192,12 @@ const removeAlternativeName = (index) => {
         </div>
     )}
 </div>
-                        <div className="grid grid-cols-3 gap-4">
-                            <Input label="Sale Price" name="price" type="number" onChange={handleInputChange} />
-                            <Input label="Label Price" name="labelledPrice" type="number" onChange={handleInputChange} />
-                            <Input label="Stock" name="stock" type="number" onChange={handleInputChange} />
-                        </div>
+                        <div className="grid grid-cols-4 gap-4">
+    <Input label="Sale Price" name="price" type="number" onChange={handleInputChange} />
+    <Input label="Label Price" name="labelledPrice" type="number" onChange={handleInputChange} />
+    <Input label="Stock" name="stock" type="number" onChange={handleInputChange} />
+    <Input label="Sold Quantity" name="soldCount" type="number" onChange={handleInputChange} />
+</div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Description</label>
                             <textarea name="description" rows="5" onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-sm focus:ring-2 focus:ring-slate-900 outline-none transition" />
