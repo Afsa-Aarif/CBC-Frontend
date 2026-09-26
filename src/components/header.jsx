@@ -1,10 +1,68 @@
 // src/components/header.jsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiShoppingBag, FiUser } from 'react-icons/fi';
+import axios from 'axios';
+import { FiShoppingBag, FiUser, FiBell } from 'react-icons/fi';
 
 export default function Header() {
   const navigate = useNavigate();
+  const [notifications, setNotifications] = useState([]);
+const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+useEffect(() => {
+  const fetchNotifications = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setNotifications([]);
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/notifications`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setNotifications(response.data.notifications || []);
+    } catch (error) {
+      console.error("Failed to fetch notifications:", error);
+    }
+  };
+
+  fetchNotifications();
+}, []);
+const markNotificationAsRead = async (notificationId) => {
+  const token = localStorage.getItem("token");
+
+  if (!token) return;
+
+  try {
+    await axios.put(
+      `${import.meta.env.VITE_API_URL}/api/notifications/${notificationId}/read`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    // Update the notification locally
+    setNotifications((currentNotifications) =>
+      currentNotifications.map((notification) =>
+        notification._id === notificationId
+          ? { ...notification, isRead: true }
+          : notification
+      )
+    );
+  } catch (error) {
+    console.error("Failed to mark notification as read:", error);
+  }
+};
   
   // Replace these with your actual state/auth logic if using Context or Redux
   const user = JSON.parse(localStorage.getItem('user')) || { name: 'Afsa Aarif', role: 'ADMIN' };
@@ -29,6 +87,82 @@ export default function Header() {
 
         {/* Right Controls: Cart & Profile Badge */}
         <div className="flex items-center gap-6">
+          {/* Notification Bell */}
+{localStorage.getItem("token") && (
+  <button
+    onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+    className="relative p-2 text-slate-700 hover:text-rose-500 transition-colors"
+    aria-label="Notifications"
+  >
+    <FiBell size={20} />
+
+    {notifications.filter((notification) => !notification.isRead).length > 0 && (
+      <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[9px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
+        {notifications.filter((notification) => !notification.isRead).length}
+      </span>
+    )}
+  </button>
+)}
+{/* Notification Panel */}
+{isNotificationOpen && (
+  <div className="absolute right-24 top-16 w-80 sm:w-96 bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden z-50">
+    
+    {/* Panel Header */}
+    <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+      <div>
+        <h3 className="text-sm font-black text-slate-900">
+          Notifications
+        </h3>
+        <p className="text-[10px] text-slate-400 mt-1">
+          Your latest updates
+        </p>
+      </div>
+
+      <span className="text-[10px] font-bold text-rose-500">
+        {notifications.filter((notification) => !notification.isRead).length} unread
+      </span>
+    </div>
+
+    {/* Notifications List */}
+    <div className="max-h-96 overflow-y-auto">
+      {notifications.length === 0 ? (
+        <div className="px-5 py-10 text-center">
+          <FiBell className="mx-auto text-slate-300 mb-3" size={28} />
+          <p className="text-sm font-bold text-slate-500">
+            No notifications
+          </p>
+          <p className="text-[10px] text-slate-400 mt-1">
+            You're all caught up!
+          </p>
+        </div>
+      ) : (
+        notifications.map((notification) => (
+          <div
+  key={notification._id}
+  onClick={() => markNotificationAsRead(notification._id)}
+  className={`px-5 py-4 border-b border-slate-100 cursor-pointer hover:bg-slate-50 transition-colors ${
+              notification.isRead
+                ? "bg-white"
+                : "bg-rose-50"
+            }`}
+          >
+            <h4 className="text-xs font-black text-slate-800">
+              {notification.title}
+            </h4>
+
+            <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
+              {notification.message}
+            </p>
+
+            <p className="text-[9px] text-slate-400 mt-2">
+              {new Date(notification.createdAt).toLocaleString()}
+            </p>
+          </div>
+        ))
+      )}
+    </div>
+  </div>
+)}
           
           {/* Cart Link */}
           <Link to="/cart" className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-700 hover:text-rose-500 transition-colors">

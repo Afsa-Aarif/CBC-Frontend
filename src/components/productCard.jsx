@@ -59,6 +59,18 @@ export default function ProductCard({ product }) {
         <h1 className="text-sm font-black text-slate-800 tracking-tight mt-1 line-clamp-1 group-hover:text-rose-500 transition-colors">
           {productName}
         </h1>
+        {/* Alternative Names */}
+{Array.isArray(product.altNames) && product.altNames.length > 0 && (
+  <div className="mt-1.5">
+    <p className="text-[8px] font-bold uppercase tracking-wider text-slate-400">
+      Also known as
+    </p>
+
+    <p className="text-[9px] font-semibold text-slate-500 line-clamp-1">
+      {product.altNames.join(" • ")}
+    </p>
+  </div>
+)}
 
         {/* Price Configuration Module */}
         <div className="mt-2 flex items-baseline gap-2">
