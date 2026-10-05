@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiCamera, FiSettings, FiShoppingBag, FiLogOut, FiChevronRight, FiArrowLeft } from "react-icons/fi";
+import { FiCamera, FiSettings, FiShoppingBag, FiHeart, FiLogOut, FiChevronRight, FiArrowLeft } from "react-icons/fi";
 import toast from "react-hot-toast";
 import axios from "axios";
 
@@ -210,7 +210,16 @@ export default function ProfilePage() {
                 </div>
                 <FiChevronRight className="text-slate-300 group-hover:text-slate-900" />
               </button>
-
+<button 
+  onClick={() => navigate("/wishlist")}
+  className="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 transition-all text-left group"
+>
+  <div className="flex items-center gap-4 text-slate-700 font-bold text-xs uppercase tracking-wide">
+    <FiHeart size={16} className="text-slate-400 group-hover:text-rose-500" />
+    My Favorites
+  </div>
+  <FiChevronRight className="text-slate-300 group-hover:text-slate-900" />
+</button>
               <button 
                 onClick={() => navigate("/orders")}
                 className="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 transition-all text-left group"

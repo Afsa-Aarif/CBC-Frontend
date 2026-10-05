@@ -7,24 +7,24 @@ import mediaUpload from "../../utils/mediaUpload";
 
 export default function AddProductPage() {
     const [formData, setFormData] = useState({
-    productID: "", 
-    name: "", 
-    altNames: [],
-    description: "",
-    usage: "", 
-    shippingInfo: "", 
-    price: 0, 
-    labelledPrice: 0, 
-    category: "Skincare", 
-    stock: 0,
-    soldCount: 0
-});
+        productID: "", 
+        name: "", 
+        altNames: [],
+        description: "",
+        usage: "", 
+        shippingInfo: "", 
+        price: 0, 
+        labelledPrice: 0, 
+        category: "", 
+        stock: 0,
+        soldCount: 0
+    });
     
     const [featureInput, setFeatureInput] = useState("");
-const [features, setFeatures] = useState(["Vegan", "Cruelty Free", "Dermatologically Tested"]);
+    const [features, setFeatures] = useState(["Vegan", "Cruelty Free", "Dermatologically Tested"]);
 
-const [altNameInput, setAltNameInput] = useState("");
-const [altNames, setAltNames] = useState([]);
+    const [altNameInput, setAltNameInput] = useState("");
+    const [altNames, setAltNames] = useState([]);
     const [images, setImages] = useState([]);
     const [previews, setPreviews] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -52,27 +52,30 @@ const [altNames, setAltNames] = useState([]);
             setFeatureInput("");
         }
     };
+
     const addAlternativeName = () => {
-    const name = altNameInput.trim();
+        const name = altNameInput.trim();
 
-    if (!name) return;
+        if (!name) return;
 
-    if (altNames.includes(name)) {
-        toast.error("This alternative name already exists");
-        return;
-    }
+        if (altNames.includes(name)) {
+            toast.error("This alternative name already exists");
+            return;
+        }
 
-    setAltNames([...altNames, name]);
-    setAltNameInput("");
-};
+        setAltNames([...altNames, name]);
+        setAltNameInput("");
+    };
 
-const removeAlternativeName = (index) => {
-    setAltNames(altNames.filter((_, i) => i !== index));
-};
+    const removeAlternativeName = (index) => {
+        setAltNames(altNames.filter((_, i) => i !== index));
+    };
 
     async function addProduct() {
         const token = localStorage.getItem("token");
         if (!formData.productID || !formData.name) return toast.error("SKU and Name are required");
+        if (!formData.category) return toast.error("Please select a category");
+
         if (images.length === 0) return toast.error("Please upload at least one image");
 
         setIsLoading(true);
@@ -87,12 +90,12 @@ const removeAlternativeName = (index) => {
 
             toast.success("Images synced to cloud!", { id: "uploading" });
 
-           const payload = {
-    ...formData,
-    altNames: altNames,
-    features: features,
-    images: uploadedImageUrls
-};
+            const payload = {
+                ...formData,
+                altNames: altNames,
+                features: features,
+                images: uploadedImageUrls
+            };
 
             await axios.post(`${import.meta.env.VITE_API_URL}/api/products`, payload, {
                 headers: { 
@@ -125,79 +128,101 @@ const removeAlternativeName = (index) => {
 
                 <div className="p-10 grid grid-cols-1 lg:grid-cols-3 gap-12">
                     <div className="lg:col-span-2 space-y-8">
-                       <div className="grid grid-cols-2 gap-6">
-    <Input
-        label="SKU / Product ID"
-        name="productID"
-        placeholder="CBC-001"
-        onChange={handleInputChange}
-    />
+                        <div className="grid grid-cols-2 gap-6">
+                            <Input
+                                label="SKU / Product ID"
+                                name="productID"
+                                placeholder="CBC-001"
+                                onChange={handleInputChange}
+                            />
 
-    <Input
-        label="Product Name"
-        name="name"
-        placeholder="Glow Serum"
-        onChange={handleInputChange}
-    />
-</div>
+                            <Input
+                                label="Product Name"
+                                name="name"
+                                placeholder="Glow Serum"
+                                onChange={handleInputChange}
+                            />
+                        </div>
 
-{/* Alternative Names */}
-<div className="space-y-3">
-    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-        Alternative Names
-    </label>
+                        {/* CATEGORY SELECTOR OPTION */}
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                Category
+                            </label>
+                            <select
+                                name="category"
+                                value={formData.category}
+                                onChange={handleInputChange}
+                                className="bg-slate-50 border border-slate-100 h-12 rounded-xl px-4 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-slate-900 outline-none cursor-pointer"
+                            >
+                                <option value="" disabled>Select Category</option>
+                                <option value="Skincare">Skincare</option>
+                                <option value="Makeup">Makeup</option>
+                                <option value="Haircare">Haircare</option>
+                                <option value="Fragrance">Fragrance</option>
+                                <option value="Bath">Bath</option>
+                            </select>
+                        </div>
 
-    <div className="flex gap-2">
-        <input
-            type="text"
-            value={altNameInput}
-            onChange={(e) => setAltNameInput(e.target.value)}
-            onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                    e.preventDefault();
-                    addAlternativeName();
-                }
-            }}
-            placeholder="e.g. CeraVe Face Wash"
-            className="flex-1 bg-slate-50 border border-slate-100 h-12 rounded-xl px-4 text-sm focus:ring-2 focus:ring-slate-900 outline-none"
-        />
+                        {/* Alternative Names */}
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                Alternative Names
+                            </label>
 
-        <button
-            type="button"
-            onClick={addAlternativeName}
-            className="px-4 rounded-xl bg-slate-900 text-white hover:bg-black transition"
-        >
-            <FiPlusCircle size={20} />
-        </button>
-    </div>
+                            <div className="flex gap-2">
+                                <input
+                                    type="text"
+                                    value={altNameInput}
+                                    onChange={(e) => setAltNameInput(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            e.preventDefault();
+                                            addAlternativeName();
+                                        }
+                                    }}
+                                    placeholder="e.g. CeraVe Face Wash"
+                                    className="flex-1 bg-slate-50 border border-slate-100 h-12 rounded-xl px-4 text-sm focus:ring-2 focus:ring-slate-900 outline-none"
+                                />
 
-    {altNames.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-            {altNames.map((name, index) => (
-                <span
-                    key={index}
-                    className="flex items-center gap-2 bg-slate-100 text-slate-700 px-3 py-2 rounded-full text-xs font-semibold"
-                >
-                    {name}
+                                <button
+                                    type="button"
+                                    onClick={addAlternativeName}
+                                    className="px-4 rounded-xl bg-slate-900 text-white hover:bg-black transition"
+                                >
+                                    <FiPlusCircle size={20} />
+                                </button>
+                            </div>
 
-                    <button
-                        type="button"
-                        onClick={() => removeAlternativeName(index)}
-                        className="text-red-500 hover:text-red-700"
-                    >
-                        <FiX size={14} />
-                    </button>
-                </span>
-            ))}
-        </div>
-    )}
-</div>
+                            {altNames.length > 0 && (
+                                <div className="flex flex-wrap gap-2">
+                                    {altNames.map((name, index) => (
+                                        <span
+                                            key={index}
+                                            className="flex items-center gap-2 bg-slate-100 text-slate-700 px-3 py-2 rounded-full text-xs font-semibold"
+                                        >
+                                            {name}
+
+                                            <button
+                                                type="button"
+                                                onClick={() => removeAlternativeName(index)}
+                                                className="text-red-500 hover:text-red-700"
+                                            >
+                                                <FiX size={14} />
+                                            </button>
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
                         <div className="grid grid-cols-4 gap-4">
-    <Input label="Sale Price" name="price" type="number" onChange={handleInputChange} />
-    <Input label="Label Price" name="labelledPrice" type="number" onChange={handleInputChange} />
-    <Input label="Stock" name="stock" type="number" onChange={handleInputChange} />
-    <Input label="Sold Quantity" name="soldCount" type="number" onChange={handleInputChange} />
-</div>
+                            <Input label="Sale Price" name="price" type="number" onChange={handleInputChange} />
+                            <Input label="Label Price" name="labelledPrice" type="number" onChange={handleInputChange} />
+                            <Input label="Stock" name="stock" type="number" onChange={handleInputChange} />
+                            <Input label="Sold Quantity" name="soldCount" type="number" onChange={handleInputChange} />
+                        </div>
+
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Description</label>
                             <textarea name="description" rows="5" onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-sm focus:ring-2 focus:ring-slate-900 outline-none transition" />
@@ -207,7 +232,6 @@ const removeAlternativeName = (index) => {
                     <div className="space-y-8">
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Media Gallery</label>
                         
-                        {/* Hidden Native Input */}
                         <input 
                             type="file" 
                             ref={fileInputRef}
@@ -217,7 +241,6 @@ const removeAlternativeName = (index) => {
                             accept="image/*" 
                         />
 
-                        {/* Clickable Card Area */}
                         <div 
                             onClick={() => fileInputRef.current?.click()}
                             className="border-2 border-dashed border-slate-200 rounded-3xl h-36 flex flex-col items-center justify-center hover:bg-slate-50 transition cursor-pointer"
@@ -228,7 +251,6 @@ const removeAlternativeName = (index) => {
                             </p>
                         </div>
 
-                        {/* Image Previews */}
                         <div className="grid grid-cols-3 gap-2">
                             {previews.map((url, i) => (
                                 <div key={i} className="relative aspect-square">

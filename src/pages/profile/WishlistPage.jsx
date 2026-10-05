@@ -20,9 +20,13 @@ export default function WishlistPage() {
       }
       try {
         const res = await axios.get(`${API_URL}/api/wishlist/${user.email}`);
+       
         // Safely filter products that might be null or missing productID
-        const items = res.data.products?.filter(item => item && item.productID) || [];
-        setWishlistItems(items);
+       const items = res.data.products?.filter(item => item && item.productID) || [];
+
+
+
+setWishlistItems(items);
       } catch (error) {
         console.error("Fetch Wishlist Error:", error);
       } finally {
@@ -66,6 +70,7 @@ export default function WishlistPage() {
         </button>
 
         <h1 className="text-3xl font-black uppercase italic mb-8 text-slate-900">My Favorites</h1>
+        
 
         {wishlistItems.length === 0 ? (
           <div className="bg-white rounded-[2rem] p-12 shadow-sm border border-slate-100 text-center">
@@ -80,36 +85,50 @@ export default function WishlistPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {wishlistItems.map((item) => (
-              <div key={item.productID?._id} className="group bg-white rounded-[2.5rem] p-6 border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 relative overflow-hidden">
-                <button 
-                  onClick={() => handleRemove(item.productID?._id)}
-                  className="absolute top-4 right-4 p-3 bg-slate-50 text-slate-400 hover:text-rose-500 rounded-2xl transition-colors z-10"
-                >
-                  <BiTrash size={20} />
-                </button>
-                
-                <Link to={`/product/${item.productID?._id}`}>
-                  <div className="aspect-square rounded-[2rem] bg-slate-50 mb-6 overflow-hidden flex items-center justify-center p-8">
-                    <img 
-                      src={item.productID?.images?.[0] || "https://via.placeholder.com/150"} 
-                      alt={item.productID?.name} 
-                      className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700"
-                    />
-                  </div>
-                  
-                  <div className="px-2">
-                    <span className="text-[9px] font-black text-rose-400 uppercase tracking-widest">{item.productID?.category}</span>
-                    <h3 className="text-lg font-black text-slate-900 uppercase italic leading-tight mt-1 mb-2 group-hover:text-rose-500 transition-colors">
-                      {item.productID?.name}
-                    </h3>
-                    <p className="text-xl font-black text-slate-900">
-                      LKR {item.productID?.price?.toLocaleString()}
-                    </p>
-                  </div>
-                </Link>
-              </div>
-            ))}
+            {wishlistItems.map((item) => {
+  const product = item.productID;
+
+  return (
+    <div
+      key={product?._id}
+      className="group bg-white rounded-[2.5rem] p-6 border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 relative overflow-hidden"
+    >
+      <button
+        onClick={() => handleRemove(product?._id)}
+        className="absolute top-4 right-4 p-3 bg-slate-50 text-slate-400 hover:text-rose-500 rounded-2xl transition-colors z-10"
+      >
+        <BiTrash size={20} />
+      </button>
+
+      <Link to={`/product/${product?._id}`} className="block">
+        <div className="aspect-square rounded-[2rem] bg-slate-50 mb-6 overflow-hidden flex items-center justify-center p-8">
+          <img
+            src={
+              product?.images?.[0] ||
+              "https://via.placeholder.com/150"
+            }
+            alt={product?.name || "Wishlist product"}
+            className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700"
+          />
+        </div>
+
+        <div className="px-2">
+          <span className="text-[9px] font-black text-rose-400 uppercase tracking-widest">
+            {product?.category}
+          </span>
+
+          <h3 className="text-lg font-black text-slate-900 uppercase italic leading-tight mt-1 mb-2 group-hover:text-rose-500 transition-colors">
+            {product?.name}
+          </h3>
+
+          <p className="text-xl font-black text-slate-900">
+            LKR {Number(product?.price || 0).toLocaleString()}
+          </p>
+        </div>
+      </Link>
+    </div>
+  );
+})}
           </div>
         )}
       </div>

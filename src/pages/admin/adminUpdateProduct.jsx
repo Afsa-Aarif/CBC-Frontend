@@ -20,7 +20,7 @@ export default function AdminProductUpdatePage() {
         labelledPrice: 0,
         stock: 0,
         soldCount: 0,
-        category: "Skincare",
+        category: " ",
         shippingInfo: ""
     });
 
@@ -48,7 +48,7 @@ const [altNameInput, setAltNameInput] = useState("");
                     labelledPrice: p.labelledPrice || 0,
                     stock: p.stock || 0,
                     soldCount: p.soldCount || 0,
-                    category: p.category || "Skincare",
+                    category: p.category || "",
                     shippingInfo: p.shippingInfo || ""
                 });
                 setFeatures(p.features || []);
@@ -109,6 +109,9 @@ const removeAlternativeName = (index) => {
         if (!formData.description.trim()) {
             return toast.error("Description is required before saving!");
         }
+        if (!formData.category) {
+    return toast.error("Please select a category");
+}
 
         setIsUpdating(true);
         const token = localStorage.getItem("token");
@@ -126,9 +129,15 @@ const removeAlternativeName = (index) => {
     images: [...existingImages, ...uploadedUrls]
 };
 
-            await axios.put(`${import.meta.env.VITE_API_URL}/api/products/${id}`, finalData, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+           const updateResponse = await axios.put(
+    `${import.meta.env.VITE_API_URL}/api/products/${id}`,
+    finalData,
+    {
+        headers: { Authorization: `Bearer ${token}` }
+    }
+);
+
+
 
             toast.success("Product updated successfully!");
             navigate("/admin/products");
@@ -218,6 +227,28 @@ const removeAlternativeName = (index) => {
     <Input label="Label Price (LKR)" type="number" value={formData.labelledPrice} onChange={(e) => setFormData({...formData, labelledPrice: e.target.value})} />
     <Input label="Stock Level" type="number" value={formData.stock} onChange={(e) => setFormData({...formData, stock: e.target.value})} />
     <Input label="Sold Quantity" type="number" value={formData.soldCount} onChange={(e) => setFormData({...formData, soldCount: e.target.value})} />
+</div>
+<div className="space-y-2">
+    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest">
+        Product Category
+    </label>
+
+    <select
+        value={formData.category}
+        onChange={(e) =>
+            setFormData({ ...formData, category: e.target.value })
+        }
+        className="w-full bg-gray-50 border border-gray-100 h-12 rounded-2xl px-4 text-sm font-semibold text-gray-700 focus:ring-2 focus:ring-indigo-600 outline-none transition-all cursor-pointer"
+    >
+        <option value="" disabled>
+            Select Category
+        </option>
+        <option value="Skincare">Skincare</option>
+        <option value="Makeup">Makeup</option>
+        <option value="Haircare">Haircare</option>
+        <option value="Fragrance">Fragrance</option>
+        <option value="Bath">Bath</option>
+    </select>
 </div>
                         <div>
                             <label className="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">

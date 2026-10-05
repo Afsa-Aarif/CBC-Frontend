@@ -21,7 +21,6 @@ export default function ProductPage() {
       try {
         setIsLoading(true);
 
-        // 1. Fetch products
         const productRes = await axios.get(`${API_URL}/api/products`);
         const fetchedData =
           productRes.data?.products ||
@@ -29,7 +28,6 @@ export default function ProductPage() {
           (Array.isArray(productRes.data) ? productRes.data : []);
         setProducts(fetchedData);
 
-        // 2. Fetch active promotions
         try {
           const promoRes = await axios.get(`${API_URL}/api/coupons/public/active`);
           if (Array.isArray(promoRes.data)) {
@@ -46,9 +44,8 @@ export default function ProductPage() {
     };
 
     fetchData();
-  }, []); // 💡 Fixed: Run once on mount
+  }, []);
 
-  // Copy promo code handler
   const handleCopyCode = (code) => {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(code);
@@ -57,7 +54,6 @@ export default function ProductPage() {
     }
   };
 
-  // Helper utility function to parse raw file names or full paths into Supabase URLs
   const getCleanImageUrl = (rawPath) => {
     if (!rawPath) return "https://placehold.co/400x500?text=No+Image";
     if (
@@ -70,7 +66,6 @@ export default function ProductPage() {
     return `https://${SUPABASE_PROJECT_ID}.supabase.co/storage/v1/object/public/${SUPABASE_BUCKET_NAME}/${rawPath}`;
   };
 
-  // Dynamically extract unique categories
   const categoriesList = useMemo(() => {
     if (products.length === 0) return [{ name: "All", image: "" }];
 
@@ -102,35 +97,29 @@ export default function ProductPage() {
     const query = searchTerm.trim().toLowerCase();
 
     return products.filter((product) => {
-        // Category matching
-        const matchesCategory =
-            selectedCategory === "All" ||
-            product.category === selectedCategory;
+      const matchesCategory =
+        selectedCategory === "All" ||
+        product.category?.trim().toLowerCase() === selectedCategory.trim().toLowerCase();
 
-        // If search is empty, don't filter by search
-        if (!query) {
-            return matchesCategory;
-        }
+      if (!query) {
+        return matchesCategory;
+      }
 
-        // Official product name
-        const productName =
-            product.name?.toLowerCase() || "";
+      const productName = product.name?.toLowerCase() || "";
+      const alternativeNames = Array.isArray(product.altNames)
+        ? product.altNames
+            .filter(Boolean)
+            .map((name) => name.toLowerCase())
+        : [];
 
-        // Alternative names
-        const alternativeNames = Array.isArray(product.altNames)
-            ? product.altNames
-                  .filter(Boolean)
-                  .map((name) => name.toLowerCase())
-            : [];
+      const matchesSearch =
+        productName.includes(query) ||
+        alternativeNames.some((name) => name.includes(query));
 
-        // Search official name OR alternative names
-        const matchesSearch =
-            productName.includes(query) ||
-            alternativeNames.some((name) => name.includes(query));
-
-        return matchesCategory && matchesSearch;
+      return matchesCategory && matchesSearch;
     });
-}, [products, selectedCategory, searchTerm]);
+  }, [products, selectedCategory, searchTerm]);
+
   return (
     <div className="min-h-screen bg-slate-50 pb-20 pt-20">
       <div className="max-w-7xl mx-auto px-4 mt-12">
@@ -140,65 +129,59 @@ export default function ProductPage() {
             <h2 className="text-4xl font-black text-slate-900 uppercase italic leading-none">
               Global Trends
             </h2>
-           <p className="text-[10px] text-slate-400 font-bold tracking-[0.3em] uppercase mt-2">
-    {searchTerm.trim()
-        ? `${filteredProducts.length} ${
-              filteredProducts.length === 1 ? "Product" : "Products"
-          } Found for "${searchTerm.trim()}"`
-        : `Selected Premium Essentials • ${filteredProducts.length} Items Displayed`}
-</p>
+            <p className="text-[10px] text-slate-400 font-bold tracking-[0.3em] uppercase mt-2">
+              {searchTerm.trim()
+                ? `${filteredProducts.length} ${
+                    filteredProducts.length === 1 ? "Product" : "Products"
+                  } Found for "${searchTerm.trim()}"`
+                : `Selected Premium Essentials • ${filteredProducts.length} Items Displayed`}
+            </p>
           </div>
         </div>
+
         {/* Elegant Product Search */}
-<div className="mb-10">
-    <div className="relative max-w-3xl mx-auto">
-        <div className="relative flex items-center bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 focus-within:border-slate-900 focus-within:ring-4 focus-within:ring-slate-900/5 focus-within:shadow-xl">
-            
-         <div className="pl-5 text-slate-400">
-    <FaSearch size={16} />
-</div>
-            {/* Search Input */}
-            <input
+        <div className="mb-10">
+          <div className="relative max-w-3xl mx-auto">
+            <div className="relative flex items-center bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 focus-within:border-slate-900 focus-within:ring-4 focus-within:ring-slate-900/5 focus-within:shadow-xl">
+              <div className="pl-5 text-slate-400">
+                <FaSearch size={16} />
+              </div>
+              <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search products, brands or alternative names..."
                 className="w-full h-14 px-4 bg-transparent outline-none text-sm font-medium text-slate-700 placeholder:text-slate-400"
-            />
+              />
 
-            {/* Clear Button */}
-            {searchTerm && (
+              {searchTerm && (
                 <button
-                    type="button"
-                    onClick={() => setSearchTerm("")}
-                    className="mr-3 w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-900 hover:text-white transition-all duration-200 flex items-center justify-center font-bold"
-                    aria-label="Clear search"
+                  type="button"
+                  onClick={() => setSearchTerm("")}
+                  className="mr-3 w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-900 hover:text-white transition-all duration-200 flex items-center justify-center font-bold"
+                  aria-label="Clear search"
                 >
                   <FaTimes size={13} />
                 </button>
-            )}
-        </div>
+              )}
+            </div>
 
-        {/* Search Hint */}
-        <div className="flex items-center justify-center gap-2 mt-3">
-            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
+            <div className="flex items-center justify-center gap-2 mt-3">
+              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
                 Search by
-            </span>
-
-            <span className="text-[9px] font-bold uppercase tracking-wider text-slate-500">
+              </span>
+              <span className="text-[9px] font-bold uppercase tracking-wider text-slate-500">
                 Product Name
-            </span>
-
-            <span className="text-slate-300">•</span>
-
-            <span className="text-[9px] font-bold uppercase tracking-wider text-slate-500">
+              </span>
+              <span className="text-slate-300">•</span>
+              <span className="text-[9px] font-bold uppercase tracking-wider text-slate-500">
                 Alternative Name
-            </span>
+              </span>
+            </div>
+          </div>
         </div>
-    </div>
-</div>
 
-        {/* PROMOTION ANNOUNCEMENT BANNER SECTION */}
+        {/* PROMOTION BANNER SECTION */}
         {promotions.length > 0 && (
           <div className="mb-10 space-y-3">
             {promotions.map((promo) => {
@@ -239,7 +222,6 @@ export default function ProductPage() {
                     </div>
                   </div>
 
-                  {/* CLICKABLE COPY BUTTON */}
                   <button
                     onClick={() => handleCopyCode(promo.code)}
                     className="bg-white/10 hover:bg-white/20 transition-all backdrop-blur-md px-5 py-2.5 rounded-2xl border border-white/20 text-center flex-shrink-0 active:scale-95 cursor-pointer flex flex-col items-center justify-center min-w-[140px]"
@@ -263,7 +245,7 @@ export default function ProductPage() {
           </div>
         )}
 
-        {/* Category Navigation Strip */}
+        {/* Dynamic Category Navigation Strip */}
         {!isLoading && products.length > 0 && (
           <div className="w-full flex items-center gap-6 overflow-x-auto pb-6 mb-12 scrollbar-none snap-x">
             {categoriesList.map((cat, idx) => {
@@ -314,7 +296,7 @@ export default function ProductPage() {
           </div>
         )}
 
-               {/* Dynamic Loading Handler */}
+        {/* Dynamic Loading Handler */}
         {isLoading ? (
           <div className="flex justify-center py-40">
             <div className="w-10 h-10 border-4 border-slate-200 border-t-slate-900 rounded-full animate-spin"></div>
