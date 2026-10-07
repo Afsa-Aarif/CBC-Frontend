@@ -6,6 +6,7 @@ import axios from "axios";
 export default function MyOrdersPage() {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
+  const [orderProducts, setOrderProducts] = useState({});
   const [loading, setLoading] = useState(true);
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -17,7 +18,26 @@ export default function MyOrdersPage() {
        const response = await axios.get(
   `${API_URL}/api/orders/user/${encodeURIComponent(user.email)}`
 );
-        setOrders(response.data);
+     const fetchedOrders = response.data;
+setOrders(fetchedOrders);
+
+const productMap = {};
+
+for (const order of fetchedOrders) {
+  for (const item of order.items || []) {
+    try {
+      const productResponse = await axios.get(
+        `${API_URL}/api/products/${item.productID}`
+      );
+
+      productMap[item.productID] = productResponse.data.product;
+    } catch (error) {
+      console.error(`Failed to fetch product ${item.productID}:`, error);
+    }
+  }
+}
+
+setOrderProducts(productMap);
       } catch (error) {
         console.error("Error fetching orders history:", error);
       } finally {
@@ -55,10 +75,32 @@ export default function MyOrdersPage() {
                     <BiPackage size={30} />
                   </div>
                   <div>
-                    <p className="text-[10px] font-black uppercase text-slate-400">Order ID</p>
-                   <p className="font-bold text-slate-900">
-  {order._id}
+                   <p className="text-[10px] font-black uppercase text-slate-400">
+  Order ID
 </p>
+
+<p className="font-bold text-slate-900">
+  #{order._id.slice(-8).toUpperCase()}
+</p>
+
+<div className="mt-2">
+  <p className="text-[10px] font-black uppercase text-slate-400">
+    Products
+  </p>
+
+  {order.items?.map((item, index) => {
+    const product = orderProducts[item.productID];
+
+    return (
+      <p
+        key={`${item.productID}-${index}`}
+        className="text-sm font-bold text-slate-700"
+      >
+        {product?.productID || "Product"} — {product?.name || "Loading..."} × {item.quantity}
+      </p>
+    );
+  })}
+</div>
                   </div>
                 </div>
 
