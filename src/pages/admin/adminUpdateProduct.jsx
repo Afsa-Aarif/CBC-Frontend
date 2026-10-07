@@ -39,6 +39,7 @@ const [altNameInput, setAltNameInput] = useState("");
             try {
                 const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/products/${id}`);
                 const p = res.data.product || res.data.data || res.data;
+                console.log("PRODUCT LOADED INTO EDIT FORM:", p);
                 setFormData({
                     productID: p.productID || "",
                     name: p.name || "",

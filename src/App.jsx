@@ -32,6 +32,7 @@ import ForgetPassword from './pages/forget-password.jsx';
 // PROFILE NESTED PAGES
 import WishlistPage from './pages/profile/WishlistPage.jsx';
 import MyOrdersPage from './pages/profile/MyOrdersPage.jsx';
+import OrderDetailsPage from './pages/profile/OrderDetailsPage.jsx';
 import EditProfilePage from './pages/profile/EditProfilePage.jsx';
 
 const stripePromise = loadStripe("pk_test_51TMDSpKnRpTeeHpYBhzAa5Lk9YRLU2BB3gzBsU9oY1fSMiYHlvL40FUoBN8ODAARRxqEfwj4SWr31Gt19GQz9b2600RYvJs3qQ");
@@ -93,6 +94,11 @@ function App() {
                 <MyOrdersPage />
               </ProtectedRoute>
             } />
+            <Route path="/my-orders/:orderId" element={
+  <ProtectedRoute allowedRoles={["customer", "admin"]}>
+    <OrderDetailsPage />
+  </ProtectedRoute>
+} />
             <Route path="/edit-profile" element={
               <ProtectedRoute allowedRoles={["customer", "admin"]}>
                 <EditProfilePage />

@@ -300,7 +300,7 @@ export default function UserDataMobile() {
 
               <button 
                 type="button"
-                onClick={() => setActiveSubView("orders")}
+                onClick={() => window.location.href = "/my-orders"}
                 className="flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 transition-all group w-full border-none cursor-pointer text-left bg-transparent"
               >
                 <div className="flex items-center gap-4">

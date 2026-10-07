@@ -14,7 +14,9 @@ export default function MyOrdersPage() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/orders/user/${user.email}`);
+       const response = await axios.get(
+  `${API_URL}/api/orders/user/${encodeURIComponent(user.email)}`
+);
         setOrders(response.data);
       } catch (error) {
         console.error("Error fetching orders history:", error);
@@ -54,7 +56,9 @@ export default function MyOrdersPage() {
                   </div>
                   <div>
                     <p className="text-[10px] font-black uppercase text-slate-400">Order ID</p>
-                    <p className="font-bold text-slate-900">#{order._id.slice(-8).toUpperCase()}</p>
+                   <p className="font-bold text-slate-900">
+  {order._id}
+</p>
                   </div>
                 </div>
 
@@ -71,14 +75,9 @@ export default function MyOrdersPage() {
                 </div>
 
                 <button 
-                  onClick={() => {
-                    const targetId = order.items?.[0]?.productID;
-                    if (targetId) {
-                      navigate(`/product/${targetId}`);
-                    } else {
-                      alert("Product ID reference missing on this record.");
-                    }
-                  }}
+                 onClick={() => {
+  navigate(`/my-orders/${order._id}`);
+}}
                   className="bg-slate-900 text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-rose-600 transition-all shadow-md"
                 >
                   View Details
