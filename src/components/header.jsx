@@ -2,11 +2,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FiShoppingBag, FiUser, FiBell } from 'react-icons/fi';
+import { FiShoppingBag, FiUser, FiBell, FiMenu, FiX } from 'react-icons/fi';
 
 export default function Header() {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 useEffect(() => {
   const fetchNotifications = async () => {
@@ -69,7 +70,7 @@ const markNotificationAsRead = async (notificationId) => {
   const cartCount = 0; 
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 lg:px-12 py-4">
+    <header className="relative sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 lg:px-12 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         
         {/* Brand Logo */}
@@ -84,8 +85,54 @@ const markNotificationAsRead = async (notificationId) => {
           <Link to="/about" className="hover:text-rose-500 transition-colors">About</Link>
           <Link to="/contact" className="hover:text-rose-500 transition-colors">Contact</Link>
         </nav>
-
+{/* Mobile Menu Button */}
+<button
+  type="button"
+  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+  className="md:hidden p-2 text-slate-700 hover:text-rose-500 transition-colors"
+  aria-label="Toggle mobile menu"
+>
+  {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+</button>
         {/* Right Controls: Cart & Profile Badge */}
+        {/* Mobile Navigation Menu */}
+{isMobileMenuOpen && (
+  <div className="absolute left-0 top-full w-full bg-white border-b border-slate-100 shadow-md md:hidden">
+    <nav className="flex flex-col px-6 py-4 text-xs font-black uppercase tracking-widest text-slate-600">
+      <Link
+        to="/"
+        onClick={() => setIsMobileMenuOpen(false)}
+        className="py-3 hover:text-rose-500 transition-colors"
+      >
+        Home
+      </Link>
+
+      <Link
+        to="/products"
+        onClick={() => setIsMobileMenuOpen(false)}
+        className="py-3 hover:text-rose-500 transition-colors"
+      >
+        Products
+      </Link>
+
+      <Link
+        to="/about"
+        onClick={() => setIsMobileMenuOpen(false)}
+        className="py-3 hover:text-rose-500 transition-colors"
+      >
+        About
+      </Link>
+
+      <Link
+        to="/contact"
+        onClick={() => setIsMobileMenuOpen(false)}
+        className="py-3 hover:text-rose-500 transition-colors"
+      >
+        Contact
+      </Link>
+    </nav>
+  </div>
+)}
         <div className="flex items-center gap-6">
           {/* Notification Bell */}
 {localStorage.getItem("token") && (
