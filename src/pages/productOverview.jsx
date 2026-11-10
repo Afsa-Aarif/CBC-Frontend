@@ -353,12 +353,15 @@ export default function ProductOverview() {
                             </button>
                         </div>
 
-                        <div>
-                            <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Description</h3>
-                            <p className="text-slate-600 text-xs leading-relaxed font-medium">
-                                {product?.description || "Premium formula crafted for luxury results."}
-                            </p>
-                        </div>
+                       <div className="mt-2">
+    <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-3">
+        Description
+    </h3>
+
+    <p className="text-left text-slate-600 text-sm leading-7 font-medium whitespace-pre-line break-words">
+        {product?.description || "Premium formula crafted for luxury results."}
+    </p>
+</div>
                     </div>
                 </div>
 

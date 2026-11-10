@@ -46,7 +46,7 @@ export default function AdminUsersPage() {
                 { isBlock: !currentStatus }, 
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-
+            
             setUsers(prev => prev.map(u => u._id === userId ? { ...u, isBlock: !currentStatus } : u));
             toast.success(`User ${!currentStatus ? 'blocked' : 'unblocked'} successfully`);
         } catch (err) {
@@ -54,6 +54,40 @@ export default function AdminUsersPage() {
             toast.error("Action failed. Check server connection.");
         }
     };
+// Record a completed membership activity
+const handleMembershipActivity = async (userId) => {
+    const token = localStorage.getItem("token");
+
+    try {
+        const res = await axios.post(
+            `${API_BASE}/api/users/admin/${userId}/membership-activity`,
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        setUsers(prev =>
+            prev.map(user =>
+                user._id === userId
+                    ? { ...user, ...res.data.user }
+                    : user
+            )
+        );
+
+        toast.success(
+            `Membership updated to ${res.data.membershipTier}!`
+        );
+
+    } catch (err) {
+        console.error("Membership Activity Error:", err);
+        toast.error(
+            err.response?.data?.message || "Failed to update membership"
+        );
+    }
+};
 
     useEffect(() => {
         fetchUsers();
@@ -95,6 +129,7 @@ export default function AdminUsersPage() {
                                 <tr className="text-[#001529]/40 text-[10px] uppercase tracking-widest font-black border-b border-gray-100">
                                     <th className="px-10 py-6">User Identity</th>
                                     <th className="px-6 py-6">Role</th>
+                                    <th className="px-6 py-6 text-center">Membership</th>
                                     <th className="px-6 py-6 text-center">Verification</th>
                                     <th className="px-10 py-6 text-right">Action</th>
                                 </tr>
@@ -113,6 +148,14 @@ export default function AdminUsersPage() {
                                                 ? user.image 
                                                 : `${API_BASE}/${user.image.replace(/^\//, "")}`)
                                             : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName || "User")}&background=001529&color=fff&bold=true`;
+                                            const membershipCount = user.membershipCompletedCount || 0;
+
+const membershipTier =
+    membershipCount >= 10
+        ? "VIP"
+        : membershipCount >= 5
+        ? "Premium"
+        : "Regular";
 
                                         return (
                                             <tr key={user._id} className="hover:bg-blue-50/20 transition-colors group">
@@ -156,6 +199,16 @@ export default function AdminUsersPage() {
                                                         </div>
                                                     )}
                                                 </td>
+                                                {/* Membership Status */}
+<td className="px-6 py-6 text-center">
+    <span className="font-semibold text-slate-700">
+        {membershipTier}
+    </span>
+
+    <p className="text-xs text-slate-400">
+        {membershipCount} activities
+    </p>
+</td>
                                                 <td className="px-10 py-6 text-right">
                                                     <button 
                                                         onClick={() => handleToggleBlock(user._id, user.isBlock)}
@@ -163,13 +216,21 @@ export default function AdminUsersPage() {
                                                     >
                                                         {user.isBlock ? "Unblock" : "Block"}
                                                     </button>
+                                                    {user.role === "customer" && (
+    <button
+        onClick={() => handleMembershipActivity(user._id)}
+        className="ml-2 px-3 py-2 rounded-lg bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700"
+    >
+        + Record Activity
+    </button>
+)}
                                                 </td>
                                             </tr>
                                         );
                                     })
                                 ) : (
                                     <tr>
-                                        <td colSpan="4" className="py-20 text-center text-gray-400 font-medium italic">
+                                        <td colSpan="5" className="py-20 text-center text-gray-400 font-medium italic">
                                             No users currently registered.
                                         </td>
                                     </tr>
