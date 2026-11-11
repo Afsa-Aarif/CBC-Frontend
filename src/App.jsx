@@ -34,6 +34,7 @@ import WishlistPage from './pages/profile/WishlistPage.jsx';
 import MyOrdersPage from './pages/profile/MyOrdersPage.jsx';
 import OrderDetailsPage from './pages/profile/OrderDetailsPage.jsx';
 import EditProfilePage from './pages/profile/EditProfilePage.jsx';
+import MembershipPage from './pages/profile/MembershipPage.jsx';
 
 const stripePromise = loadStripe("pk_test_51TMDSpKnRpTeeHpYBhzAa5Lk9YRLU2BB3gzBsU9oY1fSMiYHlvL40FUoBN8ODAARRxqEfwj4SWr31Gt19GQz9b2600RYvJs3qQ");
 
@@ -79,6 +80,14 @@ function App() {
                 <UserDataMobile />
               </ProtectedRoute>
             } />
+            <Route
+  path="/membership"
+  element={
+    <ProtectedRoute allowedRoles={["customer"]}>
+      <MembershipPage />
+    </ProtectedRoute>
+  }
+/>
             <Route path="/settings" element={
               <ProtectedRoute allowedRoles={["customer", "admin"]}>
                 <UserSettings />

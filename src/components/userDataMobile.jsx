@@ -297,7 +297,24 @@ export default function UserDataMobile() {
                 </div>
                 <FaChevronRight size={12} className="text-slate-300" />
               </button>
+              {/* Membership */}
+              <button
+                type="button"
+                onClick={() => window.location.href = "/membership"}
+                className="flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 transition-all group w-full border-none cursor-pointer text-left bg-transparent"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-600 group-hover:text-rose-500 transition-colors">
+                    <FaGem size={15} />
+                  </div>
 
+                  <span className="text-sm font-black text-slate-700 tracking-tight">
+                    My Membership
+                  </span>
+                </div>
+
+                <FaChevronRight size={12} className="text-slate-300" />
+              </button>
               <button 
                 type="button"
                 onClick={() => window.location.href = "/my-orders"}
